@@ -144,14 +144,14 @@ class BooksDataSourceTest(unittest.TestCase):
                          [{'id': 0, 'title': "All Clear", 'publication_year': 2010}])
 
     def test_sorting_by_title(self):
-        self.assertEqual(anotherbooksdatasource.books(sort_by='title'),
+        self.assertEqual(self.anotherbooksdatasource.books(sort_by='title'),
                          [{'id': 9, 'title': "Love in the Time of Cholera", 'publication_year': 1985},
                           {'id': 10, 'title': "Main Street", 'publication_year': 1920},
                           {'id': 19, 'title': "Right Ho", 'publication_year': 2010},
                           {'id': 46, 'title': "The Spy Who Came in From the Cold", 'publication_year': 1963}])
 
     def test_sorting_by_year(self):
-        self.assertEqual(anotherbooksdatasource.books(sort_by='title'),
+        self.assertEqual(self.anotherbooksdatasource.books(sort_by='title'),
                          [{'id': 10, 'title': "Main Street", 'publication_year': 1920},
                           {'id': 46, 'title': "The Spy Who Came in From the Cold", 'publication_year': 1963},
                           {'id': 9, 'title': "Love in the Time of Cholera", 'publication_year': 1985},
@@ -296,7 +296,7 @@ class BooksDataSourceTest(unittest.TestCase):
          'birth_year': 1775, 'death_year': 1817}])
 
     def test_sort_by_birth_year(self):
-        self.assertEqual(anotherbooksdatasource.authors(sort_by = 'birth_year'), [{'id':7, 'last_name': 'Brontë', 'first_name': 'Charlotte',
+        self.assertEqual(self.anotherbooksdatasource.authors(sort_by = 'birth_year'), [{'id':7, 'last_name': 'Brontë', 'first_name': 'Charlotte',
          'birth_year': 1816, 'death_year': 1855}, {'id':13, 'last_name': 'Melville', 'first_name': 'Herman',
          'birth_year': 1819, 'death_year': 1891}, {'id':24, 'last_name': 'Carré', 'first_name': 'John Le',
          'birth_year': 1931, 'death_year': NULL}, {'id':0, 'last_name': 'Willis', 'first_name': 'Connie',

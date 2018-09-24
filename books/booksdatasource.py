@@ -80,7 +80,7 @@ class BooksDataSource:
 
     def read_books_file(self, some_file):
 
-        book_csv_file = open(some_file, 'r')
+        book_csv_file = open(some_file, 'r', encoding='utf-8')
         list_of_books_from_datasource = []
 
         for line in book_csv_file:
@@ -116,7 +116,7 @@ class BooksDataSource:
 
     def read_authors_file(self, some_file):
 
-        authors_csv_file = open(some_file, 'r')
+        authors_csv_file = open(some_file, 'r', encoding='utf-8')
         authors_list = []
 
         for line in authors_csv_file:
@@ -139,14 +139,14 @@ class BooksDataSource:
 
     def read_books_authors_link_file(self, some_file):
 
-        books_authors_link_csv_file = some_file
+        books_authors_link_csv_file = open(some_file, 'r', encoding='utf-8')
         books_authors_link_dict = {}
 
         for line in books_authors_link_csv_file:
             link_info = line.split(',')
             book_id = link_info[0]
             author_id = link_info[1]
-            if key not in books_authors_link_dict:
+            if author_id not in books_authors_link_dict.keys():
                 books_authors_link_dict[author_id] = [book_id]
             else:
                 books_authors_link_dict[author_id].append(book_id)
@@ -234,16 +234,16 @@ class BooksDataSource:
                     add_book_end_year = False
                     
             if ((add_book_author_id) and (add_book_search_text) and (add_book_start_year) and (add_book_end_year)):
-                refined_book_list.append(book)
+                refined_list_of_books.append(book)
             
             #Sort the refined_list_of_books
             if sort_by == 'year':
-                sorted_refined_list_of_books = sort_by_publication_year(refined_book_list)
-                return sorted_refined_list_of_book
+                sorted_refined_list_of_books = self.sort_by_publication_year(refined_list_of_books)
+                return sorted_refined_list_of_books
                 
             else:            
-                sorted_refined_list_of_books = sort_by_title(refined_book_list)
-                return sorted_refined_list_of_book
+                sorted_refined_list_of_books = self.sort_by_title(refined_list_of_books)
+                return sorted_refined_list_of_books
                 
             
 
@@ -306,7 +306,7 @@ class BooksDataSource:
         
         
         
-    def sort_by_publication_year(some_list):
+    def sort_by_publication_year(self, some_list):
         copy_list = some_list.copy()
         sorted_list = []
         for i in range(len(some_list)):
@@ -320,14 +320,14 @@ class BooksDataSource:
             copy_list.remove(counter)
         return sorted_list
 
-    def sort_by_title(some_list):
+    def sort_by_title(self, some_list):
         copy_list = some_list.copy()
         sorted_list = []
         for i in range(len(some_list)):
             counter = copy_list[0]
 
             for j in range(len(copy_list)):
-                if compare_words(copy_list[j]['title'], counter['title']): #i.e if copy_list[j] comes first
+                if self.compare_words(copy_list[j]['title'], counter['title']): #i.e if copy_list[j] comes first
                     counter = copy_list[j]
     
             sorted_list.append(counter)
@@ -336,7 +336,7 @@ class BooksDataSource:
     
     '''Compares two words and returns true if the first word is the most forward
        lexicographic word'''
-    def compare_words(word1, word2):
+    def compare_words(self, word1, word2):
     
         new_word1 = word1.lower()
         new_word2 = word2.lower()
