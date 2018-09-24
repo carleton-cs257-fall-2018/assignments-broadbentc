@@ -2,22 +2,19 @@
 # @author Charlie Broadbent
 # @author Will Thompson
 
+import booksdatasource
 import unittest
-import booksdatasouorce
 
 class BooksDataSourceTest(unittest.TestCase):
 
     def setUp(self):
-        self.booksdatasource = BooksDataSource(books.csv, authors.csv, books_authors.csv)
-        self.anotherbooksdatasource = BooksDataSource(books_test.csv, authors_test.csv, books_authors.csv)
+        self.booksdatasource = booksdatasource.BooksDataSource("books.csv", "authors.csv", "books_authors.csv")
+        self.anotherbooksdatasource = booksdatasource.BooksDataSource("books_test.csv", "authors_test.csv", "books_authors.csv")
 
     def tearDown(self):
         pass
 
-
-
     '''This Section contains unit tests for books(self, book_id) method'''
-
 
 
     def test_retrieving_book_beginning_edge_case(self):
@@ -195,7 +192,7 @@ class BooksDataSourceTest(unittest.TestCase):
     '''
 
     def test_retrieving_author_by_book_id_multiple_authors_edge_case(self):
-        self.assertEqual(booksdatasource.authors(author_id = 6), [{'id': 5, 'last_name': 'Gaiman', 'first_name': 'Neil',
+        self.assertEqual(self.booksdatasource.authors(author_id = 6), [{'id': 5, 'last_name': 'Gaiman', 'first_name': 'Neil',
          'birth_year': 1960, 'death_year': NULL}, {'id': 6, 'last_name': 'Pratchett', 'first_name': 'Terry',
          'birth_year': 1948, 'death_year': 2015}])
 
@@ -304,3 +301,6 @@ class BooksDataSourceTest(unittest.TestCase):
          'birth_year': 1819, 'death_year': 1891}, {'id':24, 'last_name': 'Carré', 'first_name': 'John Le',
          'birth_year': 1931, 'death_year': NULL}, {'id':0, 'last_name': 'Willis', 'first_name': 'Connie',
          'birth_year': 1945, 'death_year': NULL}])
+
+if __name__ == '__main__':
+    unittest.main()

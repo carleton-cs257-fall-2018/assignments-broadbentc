@@ -73,14 +73,99 @@ class BooksDataSource:
             NOTE TO STUDENTS: I have not specified how you will store the books/authors
             data in a BooksDataSource object. That will be up to you, in Phase 3.
         '''
-        pass
+
+        self.book_list = self.read_books_file(books_filename)
+        self.author_list = self.read_authors_file(authors_filename)
+        self.book_author_link_dict = self.read_books_authors_link_file(books_authors_link_filename)
+
+    def read_books_file(self, some_file):
+
+        book_csv_file = open(some_file, 'r')
+        list_of_books_from_datasource = []
+
+        for line in book_csv_file:
+            no_commas = True
+            index = 0
+
+            #Check for title with commas
+            while line[index] != ',':
+                index += 1
+            if line[index + 1] == '"':
+                no_commas = False
+
+            #Adding normal title (no commas in title)
+            if no_commas == True:
+                book_info = line.split(",")
+                book_id = book_info[0]
+                book_title = book_info[1]
+                book_date = book_info[2]
+                book_dict = {'id' : book_id, 'title': book_title, 'publication_year': book_date}
+                list_of_books_from_datasource.append(book_dict)
+
+            #Adding title with commas
+            else:
+                book_info = line.split('"')
+                book_title = book_info[1]
+                book_info.pop(1)
+                book_id = book_info[0].replace(',', "")
+                book_date = book_info[1].replace(',', "")
+                book_dict = {'id': book_id, 'title': book_title, 'publication_year': book_date}
+                list_of_books_from_datasource.append(book_dict)
+
+        return list_of_books_from_datasource
+
+    def read_authors_file(self, some_file):
+
+        authors_csv_file = open(some_file, 'r')
+        authors_list = []
+
+        for line in authors_csv_file:
+            author_info = line.split(',')
+            author_id = author_info[0]
+            author_last_name = author_info[1]
+            author_first_name = author_info[2]
+            author_birth_year = author_info[3]
+
+            if author_info[4] == 'NULL': #Is NULL a string?
+                author_death_year = "None"
+            else:
+                author_death_year = author_info[4]
+            author_dict = {'id': author_id, 'last_name': author_last_name, 'first_name': author_first_name,
+         'birth_year': author_birth_year, 'death_year': author_death_year}
+
+            authors_list.append(author_dict)
+
+        return authors_list
+
+    def read_books_authors_link_file(self, some_file):
+
+        books_authors_link_csv_file = some_file
+        books_authors_link_dict = {}
+
+        for line in books_authors_link_csv_file:
+            link_info = line.split(',')
+            book_id = link_info[0]
+            author_id = link_info[1]
+            if key not in books_authors_link_dict:
+                books_authors_link_dict[author_id] = [book_id]
+            else:
+                books_authors_link_dict[author_id].append(book_id)
+
+        return books_authors_link_dict
+
 
     def book(self, book_id):
         ''' Returns the book with the specified ID. (See the BooksDataSource comment
             for a description of how a book is represented.) '''
-        return {}
+    
+        for book in self.book_list:
+            if book['id'] == book_id:
+                return book
+            else:
+                print("There is no book with id: " + book_id + "in the data source!")
 
     def books(self, *, author_id=None, search_text=None, start_year=None, end_year=None, sort_by='title'):
+        
         ''' Returns a list of all the books in this data source matching all of
             the specified non-None criteria.
 
@@ -100,7 +185,67 @@ class BooksDataSource:
                 
             See the BooksDataSource comment for a description of how a book is represented.
         '''
-        return []
+        
+        #self.book_list 
+        #self.author_list 
+        #self.book_author_link_dict
+        
+        refined_list_of_books = []
+        sorted_refined_list_of_books = []
+        add_book_author_id = True
+        add_book_search_text = True
+        add_book_start_year = True
+        add_book_end_year = True
+        
+        for book in self.book_list:
+            
+            #Check author_id
+            if author_id != None:
+                book_author_id = book_author_link_dict[book['id']]
+                if author_id == book_author_id:
+                    add_book_author_id = True
+                else:
+                    add_book_author_id = False
+            
+            #Check search_text
+            if search_text != None:
+                desired_text = search_text.lower()
+                copy_of_book = book['title'].lower()
+                
+                if desired_text in copy_of_book:
+                    add_book_search_text = True
+                else:
+                    add_book_search_text = False
+                    
+            #Check start_year
+            if start_year != None:
+                book_start_year = book['publication_year']
+                if start_year <= book_start_year:
+                    add_book_start_year = True
+                else:
+                    add_book_start_year = False
+                    
+            #Check end_year
+            if end_year != None:
+                book_end_year = book['publication_year']
+                if end_year >= book_end_year:
+                    add_book_end_year = True
+                else:
+                    add_book_end_year = False
+                    
+            if ((add_book_author_id) and (add_book_search_text) and (add_book_start_year) and (add_book_end_year)):
+                refined_book_list.append(book)
+            
+            #Sort the refined_list_of_books
+            if sort_by == 'year':
+                sorted_refined_list_of_books = sort_by_publication_year(refined_book_list)
+                return sorted_refined_list_of_book
+                
+            else:            
+                sorted_refined_list_of_books = sort_by_title(refined_book_list)
+                return sorted_refined_list_of_book
+                
+            
 
     def author(self, author_id):
         ''' Returns the author with the specified ID. (See the BooksDataSource comment for a
@@ -132,7 +277,7 @@ class BooksDataSource:
         
             See the BooksDataSource comment for a description of how an author is represented.
         '''
-        return []
+        pass
 
 
     # Note for my students: The following two methods provide no new functionality beyond
@@ -147,9 +292,73 @@ class BooksDataSource:
         ''' Returns a list of all the books written by the author with the specified author ID.
             See the BooksDataSource comment for a description of how an book is represented. '''
         return self.books(author_id=author_id)
-
+    
     def authors_for_book(self, book_id):
         ''' Returns a list of all the authors of the book with the specified book ID.
             See the BooksDataSource comment for a description of how an author is represented. '''
         return self.authors(book_id=book_id)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    def sort_by_publication_year(some_list):
+        copy_list = some_list.copy()
+        sorted_list = []
+        for i in range(len(some_list)):
+            counter = copy_list[0]
 
+            for j in range(len(copy_list)):
+                if copy_list[j]['publication_year'] < counter['publication_year']: 
+                    counter = copy_list[j]
+    
+            sorted_list.append(counter)
+            copy_list.remove(counter)
+        return sorted_list
+
+    def sort_by_title(some_list):
+        copy_list = some_list.copy()
+        sorted_list = []
+        for i in range(len(some_list)):
+            counter = copy_list[0]
+
+            for j in range(len(copy_list)):
+                if compare_words(copy_list[j]['title'], counter['title']): #i.e if copy_list[j] comes first
+                    counter = copy_list[j]
+    
+            sorted_list.append(counter)
+            copy_list.remove(counter)
+        return sorted_list
+    
+    '''Compares two words and returns true if the first word is the most forward
+       lexicographic word'''
+    def compare_words(word1, word2):
+    
+        new_word1 = word1.lower()
+        new_word2 = word2.lower()
+    
+        list1 = []
+        list2 = []
+    
+        for char in new_word1:
+            list1.append(ord(char))
+        for char in new_word2:
+            list2.append(ord(char))
+    
+        if len(word1) <= len(new_word2):
+            shortest_length = len(new_word1)
+            shorter_word = True
+        else:
+            shortest_length = len(new_word2)
+            shorter_word = False
+    
+        for i in range(shortest_length):
+            if list1[i] < list2[i]:
+                return True 
+            if list1[i] > list2[i]:
+                return False
+        return shorter_word
