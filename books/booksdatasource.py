@@ -96,9 +96,9 @@ class BooksDataSource:
             #Adding normal title (no commas in title)
             if no_commas == True:
                 book_info = line.split(",")
-                book_id = book_info[0]
+                book_id = int(book_info[0])
                 book_title = book_info[1]
-                book_date = book_info[2]
+                book_date = int(book_info[2])
                 book_dict = {'id' : book_id, 'title': book_title, 'publication_year': book_date}
                 list_of_books_from_datasource.append(book_dict)
 
@@ -107,9 +107,10 @@ class BooksDataSource:
                 book_info = line.split('"')
                 book_title = book_info[1]
                 book_info.pop(1)
-                book_id = book_info[0].replace(',', "")
-                book_date = book_info[1].replace(',', "")
+                book_id = int(book_info[0].replace(',', ""))
+                book_date = int(book_info[1].replace(',', ""))
                 book_dict = {'id': book_id, 'title': book_title, 'publication_year': book_date}
+                print(book_dict)
                 list_of_books_from_datasource.append(book_dict)
 
         return list_of_books_from_datasource
@@ -159,10 +160,10 @@ class BooksDataSource:
             for a description of how a book is represented.) '''
     
         for book in self.book_list:
-            if book['id'] == book_id:
+            if book['id'] == int(book_id):
                 return book
             else:
-                print("There is no book with id: " + book_id + "in the data source!")
+                print("There is no book with id: " + str(book_id) + " in the data source!")
 
     def books(self, *, author_id=None, search_text=None, start_year=None, end_year=None, sort_by='title'):
         
