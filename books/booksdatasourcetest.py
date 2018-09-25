@@ -160,7 +160,7 @@ class BooksDataSourceTest(unittest.TestCase):
 
 
 
-    '''This section contains unit tests for the author(self, author_id) method'''
+    '''This section contains unit tests for the author(self, author_id) method
 
 
 
@@ -187,9 +187,9 @@ class BooksDataSourceTest(unittest.TestCase):
 
 
 
-    ''' This section contains unit tests for the
+     This section contains unit tests for the
         authors(self, *, book_id=None, search_text=None, start_year=None, end_year=None, sort_by='birth_year') method
-    '''
+    
 
     def test_retrieving_author_by_book_id_multiple_authors_edge_case(self):
         self.assertEqual(self.booksdatasource.authors(author_id = 6), [{'id': 5, 'last_name': 'Gaiman', 'first_name': 'Neil',
@@ -301,6 +301,6 @@ class BooksDataSourceTest(unittest.TestCase):
          'birth_year': 1819, 'death_year': 1891}, {'id':24, 'last_name': 'Carré', 'first_name': 'John Le',
          'birth_year': 1931, 'death_year': NULL}, {'id':0, 'last_name': 'Willis', 'first_name': 'Connie',
          'birth_year': 1945, 'death_year': NULL}])
-
+'''
 if __name__ == '__main__':
     unittest.main()
