@@ -80,44 +80,51 @@ class BooksDataSource:
 
     def read_books_file(self, some_file):
 
-        book_csv_file = open(some_file, 'r', encoding='utf-8')
+        book_csv_file = open(some_file, 'r')
         list_of_books_from_datasource = []
 
         for line in book_csv_file:
-            no_commas = True
+            does_title_have_commas = False
             index = 0
 
             #Check for title with commas
             while line[index] != ',':
                 index += 1
             if line[index + 1] == '"':
-                no_commas = False
+                does_title_have_commas = True
 
             #Adding normal title (no commas in title)
-            if no_commas == True:
-                book_info = line.split(",")
-                book_id = int(book_info[0])
-                book_title = book_info[1]
-                book_date = int(book_info[2])
-                book_dict = {'id' : book_id, 'title': book_title, 'publication_year': book_date}
-                list_of_books_from_datasource.append(book_dict)
+            if does_title_have_commas == False:
+                book_information = line.split(",")
+                book_id = int(book_information[0])
+                book_title = book_information[1]
+                
+                publication_date = book_information[2]
+                publication_date = publication_date.strip("\n")            
+                publication_date = int(publication_date)
+                
+                book = {'id' : book_id, 'title': book_title, 'publication_year': publication_date}
+                list_of_books_from_datasource.append(book)
 
             #Adding title with commas
             else:
-                book_info = line.split('"')
-                book_title = book_info[1]
-                book_info.pop(1)
-                book_id = int(book_info[0].replace(',', ""))
-                book_date = int(book_info[1].replace(',', ""))
-                book_dict = {'id': book_id, 'title': book_title, 'publication_year': book_date}
-                print(book_dict)
-                list_of_books_from_datasource.append(book_dict)
+                book_information = line.split('"')
+                book_title = book_information[1]
+                book_id = book_information[0].replace(',', "")
+                book_id = int(book_id)
+                
+                publication_date = book_information[2].replace(',', "")
+                publication_date = publication_date.strip("\n")
+                publication_date = int(publication_date)
+                
+                book = {'id': book_id, 'title': book_title, 'publication_year': publication_date}
+                list_of_books_from_datasource.append(book)
 
         return list_of_books_from_datasource
 
     def read_authors_file(self, some_file):
 
-        authors_csv_file = open(some_file, 'r', encoding='utf-8')
+        authors_csv_file = open(some_file, 'r')
         authors_list = []
 
         for line in authors_csv_file:
@@ -240,11 +247,12 @@ class BooksDataSource:
             #Sort the refined_list_of_books
             if sort_by == 'year':
                 sorted_refined_list_of_books = self.sort_by_publication_year(refined_list_of_books)
-                return sorted_refined_list_of_books
+                
                 
             else:            
                 sorted_refined_list_of_books = self.sort_by_title(refined_list_of_books)
-                return sorted_refined_list_of_books
+            
+        return sorted_refined_list_of_books
                 
             
 
