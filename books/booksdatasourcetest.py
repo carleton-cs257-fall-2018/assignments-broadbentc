@@ -10,7 +10,7 @@ class BooksDataSourceTest(unittest.TestCase):
     def setUp(self):
         self.booksdatasource = booksdatasource.BooksDataSource("books.csv", "authors.csv", "books_authors.csv")
         self.anotherbooksdatasource = booksdatasource.BooksDataSource("books_test.csv", "authors_test.csv", "books_authors.csv")
-
+                
     def tearDown(self):
         pass
 
@@ -32,7 +32,9 @@ class BooksDataSourceTest(unittest.TestCase):
 
 
     '''This Section contains unit tests for 
-       books(self, *, author_id=None, search_text=None, start_year=None, end_year=None, sort_by='title') method'''
+       books(self, *, author_id=None, search_text=None, start_year=None, end_year=None, sort_by='title') 
+       method
+    '''
 
 
 
@@ -91,25 +93,28 @@ class BooksDataSourceTest(unittest.TestCase):
 
     def test_retrieving_book_by_text1(self):
         self.assertEqual(self.booksdatasource.books(search_text='Mi'),
-                         [{'id': 11, 'title': "Midnight's Children", 'publication_year': 1981},
-                          {'id': 12, 'title': "Mirror", 'publication_year': 1994},
-                          {'id': 41, 'title': "Middlemarch", 'publication_year': 1871}])
+                         [{'id': 8, 'title': "Leave it to Psmith", 'publication_year': 1923},
+                          {'id': 41, 'title': "Middlemarch", 'publication_year': 1871},
+                          {'id': 11, 'title': "Midnight's Children", 'publication_year': 1981},
+                          {'id': 12, 'title': "Mirror Dance", 'publication_year': 1994}])
 
     def test_retrieving_book_by_text2(self):
         self.assertEqual(self.booksdatasource.books(search_text='mi'),
-                         [{'id': 11, 'title': "Midnight's Children", 'publication_year': 1981},
-                          {'id': 12, 'title': "Mirror", 'publication_year': 1994},
-                          {'id': 41, 'title': "Middlemarch", 'publication_year': 1871}])
+                         [{'id': 8, 'title': "Leave it to Psmith", 'publication_year': 1923},
+                          {'id': 41, 'title': "Middlemarch", 'publication_year': 1871},
+                          {'id': 11, 'title': "Midnight's Children", 'publication_year': 1981},
+                          {'id': 12, 'title': "Mirror Dance", 'publication_year': 1994}])
 
     def test_retrieving_book_by_text3(self):
         self.assertEqual(self.booksdatasource.books(search_text='MI'),
-                         [{'id': 11, 'title': "Midnight's Children", 'publication_year': 1981},
-                          {'id': 12, 'title': "Mirror", 'publication_year': 1994},
-                          {'id': 41, 'title': "Middlemarch", 'publication_year': 1871}])
+                         [{'id': 8, 'title': "Leave it to Psmith", 'publication_year': 1923},
+                          {'id': 41, 'title': "Middlemarch", 'publication_year': 1871},
+                          {'id': 11, 'title': "Midnight's Children", 'publication_year': 1981},
+                          {'id': 12, 'title': "Mirror Dance", 'publication_year': 1994}])
 
     def test_retrieving_book_by_multiple_input1(self):
         self.assertEqual(self.booksdatasource.books(author_id=0, search_text="All Clear", start_year=2010, end_year=2011),
-                         )[{'id': 0, 'title': "All Clear", 'publication_year': 2010}]
+                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010}])
 
     def test_retrieving_book_by_multiple_input2(self):
         self.assertEqual(self.booksdatasource.books(author_id=0, search_text="All Clear", start_year=2010),
@@ -129,38 +134,43 @@ class BooksDataSourceTest(unittest.TestCase):
 
     def test_retrieving_book_by_multiple_input6(self):  # 6?
         self.assertEqual(self.booksdatasource.books(author_id=0, end_year=2010),
-                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010}])
+                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010},
+                          {'id': 3, 'title': 'Blackout', 'publication_year': 2010},
+                          {'id': 27, 'title': 'To Say Nothing of the Dog', 'publication_year': 1997}])
 
     def test_retrieving_book_by_multiple_input7(self):  # 7?
         self.assertEqual(self.booksdatasource.books(author_id=0, start_year=2010, end_year=2010),
-                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010}])
+                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010},
+                          {'id': 3, 'title': 'Blackout', 'publication_year': 2010}])
 
     def test_retrieving_book_by_multiple_input8(self):  # 8
         self.assertEqual(self.booksdatasource.books(author_id=0, start_year=2010, end_year=2011),
-                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010}])
+                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010},
+                          {'id': 3, 'title': 'Blackout', 'publication_year': 2010}])
 
     def test_retrieving_book_by_multiple_input9(self):  # 9
         self.assertEqual(self.booksdatasource.books(author_id=0, start_year=2009, end_year=2010),
-                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010}])
+                         [{'id': 0, 'title': "All Clear", 'publication_year': 2010},
+                          {'id': 3, 'title': 'Blackout', 'publication_year': 2010}])
 
-    def test_sorting_by_title(self):
+    def test_sorting_book_by_title(self):
         self.assertEqual(self.anotherbooksdatasource.books(sort_by='title'),
                          [{'id': 9, 'title': "Love in the Time of Cholera", 'publication_year': 1985},
                           {'id': 10, 'title': "Main Street", 'publication_year': 1920},
-                          {'id': 19, 'title': "Right Ho", 'publication_year': 2010},
+                          {'id': 19, 'title': "Right Ho, Jeeves", 'publication_year': 1934},
                           {'id': 46, 'title': "The Spy Who Came in From the Cold", 'publication_year': 1963}])
 
-    def test_sorting_by_year(self):
-        self.assertEqual(self.anotherbooksdatasource.books(sort_by='title'),
+    def test_sorting_book_by_year(self):
+        self.assertEqual(self.anotherbooksdatasource.books(sort_by='year'),
                          [{'id': 10, 'title': "Main Street", 'publication_year': 1920},
+                          {'id': 19, 'title': "Right Ho, Jeeves",'publication_year': 1934},
                           {'id': 46, 'title': "The Spy Who Came in From the Cold", 'publication_year': 1963},
-                          {'id': 9, 'title': "Love in the Time of Cholera", 'publication_year': 1985},
-                          {'id': 19, 'title': "Right Ho", 'publication_year': 2010}])
+                          {'id': 9, 'title': "Love in the Time of Cholera", 'publication_year': 1985}])
 
 
 
 
-    '''This section contains unit tests for the author(self, author_id) method
+    '''This section contains unit tests for the author(self, author_id) method'''
 
 
 
@@ -187,10 +197,12 @@ class BooksDataSourceTest(unittest.TestCase):
 
 
 
-     This section contains unit tests for the
-        authors(self, *, book_id=None, search_text=None, start_year=None, end_year=None, sort_by='birth_year') method
+    '''This section contains unit tests for the 
+        authors(self, *, book_id=None, search_text=None, start_year=None, end_year=None, sort_by='birth_year') 
+        method
+    '''
+     
     
-
     def test_retrieving_author_by_book_id_multiple_authors_edge_case(self):
         self.assertEqual(self.booksdatasource.authors(author_id = 6), [{'id': 5, 'last_name': 'Gaiman', 'first_name': 'Neil',
          'birth_year': 1960, 'death_year': NULL}, {'id': 6, 'last_name': 'Pratchett', 'first_name': 'Terry',
@@ -301,6 +313,6 @@ class BooksDataSourceTest(unittest.TestCase):
          'birth_year': 1819, 'death_year': 1891}, {'id':24, 'last_name': 'Carré', 'first_name': 'John Le',
          'birth_year': 1931, 'death_year': NULL}, {'id':0, 'last_name': 'Willis', 'first_name': 'Connie',
          'birth_year': 1945, 'death_year': NULL}])
-'''
+
 if __name__ == '__main__':
     unittest.main()
