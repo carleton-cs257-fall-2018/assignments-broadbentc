@@ -9,58 +9,21 @@ import csv
 
 class BooksDataSource:
     '''
-
-    An author is represented as a dictionary with the keys
-    'id', 'last_name', 'first_name', 'birth_year', and 'death_year'.
-    For example, Jane Austen would be represented like this
-    (assuming her database-internal ID number is 72):
+    An author is represented as:
 
         {'id': 72, 'last_name': 'Austen', 'first_name': 'Jane',
          'birth_year': 1775, 'death_year': 1817}
 
-    For a living author, the death_year is represented in the author's
-    Python dictionary as None.
-
         {'id': 77, 'last_name': 'Murakami', 'first_name': 'Haruki',
          'birth_year': 1949, 'death_year': None}
 
-    A book is represented as a dictionary with the keys 'id', 'title',
-    and 'publication_year'. For example, "Pride and Prejudice"
-    (assuming an ID of 132) would look like this:
+    A book is represented as:
 
         {'id': 193, 'title': 'A Wild Sheep Chase', 'publication_year': 1982}
-
     '''
 
     def __init__(self, books_filename, authors_filename, books_authors_link_filename):
-        ''' Initializes this data source from the three specified  CSV files, whose
-            CSV fields are:
-
-                books: ID,title,publication-year
-                  e.g. 6,Good Omens,1990
-                       41,Middlemarch,1871
-                    
-
-                authors: ID,last-name,first-name,birth-year,death-year
-                  e.g. 5,Gaiman,Neil,1960,NULL
-                       6,Pratchett,Terry,1948,2015
-                       22,Eliot,George,1819,1880
-
-                link between books and authors: book_id,author_id
-                  e.g. 41,22
-                       6,5
-                       6,6
-                  
-                  [that is, book 41 was written by author 22, while book 6
-                    was written by both author 5 and author 6]
-
-            Note that NULL is used to represent a non-existent (or rather, future and
-            unknown) year in the cases of living authors.
-
-            NOTE TO STUDENTS: I have not specified how you will store the books/authors
-            data in a BooksDataSource object. That will be up to you, in Phase 3.
-        '''
-
+        
         self.book_list = self.set_book_list(books_filename)
         self.author_list = self.set_author_list(authors_filename)
         self.book_to_author_dict, self.author_to_book_dict  = self.set_book_and_author_dicts(books_authors_link_filename)
@@ -115,7 +78,10 @@ class BooksDataSource:
                 book_id = int(row[0])
                 author_id = int(row[1])            
                 
-                book_to_author_from_file[book_id] = author_id
+                if book_id not in book_to_author_from_file.keys():
+                    book_to_author_from_file[book_id] = [author_id]
+                else:
+                    book_to_author_from_file[book_id].append(author_id)
                 
                 if author_id not in author_to_book_from_file.keys():
                     author_to_book_from_file[author_id] = [book_id]
@@ -125,8 +91,6 @@ class BooksDataSource:
         return book_to_author_from_file, author_to_book_from_file
 
     def book(self, book_id):
-        ''' Returns the book with the specified ID. (See the BooksDataSource comment
-            for a description of how a book is represented.) '''
     
         for book in self.book_list:
             if book['id'] == int(book_id):
@@ -152,8 +116,6 @@ class BooksDataSource:
 
                 'year' -- sorts by publication_year, breaking ties with (case-insenstive) title
                 default -- sorts by (case-insensitive) title, breaking ties with publication_year
-                
-            See the BooksDataSource comment for a description of how a book is represented.
         '''
         
         refined_list_of_books = []
@@ -167,8 +129,8 @@ class BooksDataSource:
             
             #Check author_id
             if author_id != None:
-                book_author_id = self.book_to_author_dict[book['id']]
-                if author_id == book_author_id:
+                list_of_the_books_author_ids = self.book_to_author_dict[book['id']]
+                if author_id in list_of_the_books_author_ids:
                     add_book_author_id = True
                 else:
                     add_book_author_id = False
@@ -205,22 +167,19 @@ class BooksDataSource:
             
             #Sort the refined_list_of_books
             if sort_by == 'year':
-                sorted_refined_list_of_books = self.sort_by_year(refined_list_of_books, 'publication_year')
+                sorted_refined_list_of_books = self.sort_by_publication_year(refined_list_of_books)
             else:            
-                sorted_refined_list_of_books = self.sort_by_title_or_name(refined_list_of_books, 'title')
+                sorted_refined_list_of_books = self.sort_by_title(refined_list_of_books)
             
         return sorted_refined_list_of_books
                 
             
 
     def author(self, author_id):
-        ''' Returns the author with the specified ID. (See the BooksDataSource comment for a
-            description of how an author is represented.) '''
         
         for author in self.author_list:
             if author['id'] == int(author_id):
                 return author
-            
         print("There is no author with id: " + str(author_id) + " in the data source!")
 
     def authors(self, *, book_id=None, search_text=None, start_year=None, end_year=None, sort_by='birth_year'):
@@ -245,8 +204,6 @@ class BooksDataSource:
                     then (case-insensitive) first_name
                 any other value - sorts by (case-insensitive) last_name, breaking ties with
                     (case-insensitive) first_name, then birth_year
-        
-            See the BooksDataSource comment for a description of how an author is represented.
         '''
         
         
@@ -261,8 +218,8 @@ class BooksDataSource:
             
             #Check book_id
             if book_id != None:
-                author_book_id = self.author_to_book_dict[author['id']]
-                if book_id == author_book_id:
+                list_of_authors_book_ids = self.author_to_book_dict[author['id']]
+                if book_id in list_of_authors_book_ids:
                     add_author_book_id = True
                 else:
                     add_author_book_id = False
@@ -284,38 +241,29 @@ class BooksDataSource:
                    
             #Check start_year
             if start_year != None:
-                if start_year <= author_birth_year:
-                    add_author_birth_year = True
-                    
-                if author_death_year == 'NULL':
-                    add_author_birth_year = True
                 
-                if author_death_year != 'NULL':
-                    if start_year <= author_death_year:
-                        add_author_birth_year = True               
-                else:
+                if (author_death_year != 'NULL') and (author_death_year < start_year):
                     add_author_birth_year = False
+                else:
+                    add_author_birth_year = True                
                     
             #Check end_year
             if end_year != None:
-                if  author_death_year <= end_year:
-                    add_author_death_year = True
-                    
-                if author_birth_year <= end_year:
-                    add_author_death_year = True
                 
+                if author_birth_year <= end_year:
+                    add_author_death_year = True                                
                 else:
                     add_author_death_year = False
                     
+                    
             if ((add_author_book_id) and (add_author_search_text) and (add_author_birth_year) and (add_author_death_year)):
-                
                 refined_list_of_authors.append(author)
             
             #Sort the refined_list_of_books
-            if sort_by == 'birth_year':
-                sorted_refined_list_of_authors = self.sort_by_year(refined_list_of_authors, 'birth_year')
+            if sort_by == 'last_name':
+                sorted_refined_list_of_authors = self.sort_by_last_name(refined_list_of_authors)
             else:            
-                sorted_refined_list_of_authors = self.sort_by_title_or_name(refined_list_of_authors, 'last_name')
+                sorted_refined_list_of_authors = self.sort_by_birth_year(refined_list_of_authors)
             
         return sorted_refined_list_of_authors     
         
@@ -336,30 +284,120 @@ class BooksDataSource:
     
     
     #Helper Methods: 
-    def sort_by_year(self, some_list, year_type ):
+    def sort_by_publication_year(self, some_list):
         copy_list = some_list.copy()
         sorted_list = []
         for i in range(len(some_list)):
             counter = copy_list[0]
 
             for j in range(len(copy_list)):
-                if copy_list[j][year_type] < counter[year_type]: 
-                    counter = copy_list[j]
+                
+                copy_title = copy_list[j]['title']
+                copy_publication_year = copy_list[j]['publication_year']
+                
+                counter_title = counter['title']
+                counter_publication_year = counter['publication_year']  
+                
+                if copy_publication_year != counter_publication_year:
+                    if copy_publication_year < counter_publication_year: 
+                        counter = copy_list[j] 
+                
+                else:
+                    if self.compare_words(copy_title, counter_title): 
+                        counter = copy_list[j]    
     
             sorted_list.append(counter)
             copy_list.remove(counter)
         return sorted_list
 
-    def sort_by_title_or_name(self, some_list, name):
+    def sort_by_title(self, some_list):
         copy_list = some_list.copy()
         sorted_list = []
         for i in range(len(some_list)):
             counter = copy_list[0]
 
             for j in range(len(copy_list)):
-                if self.compare_words(copy_list[j][name], counter[name]): 
-                    counter = copy_list[j]
+                
+                copy_title = copy_list[j]['title']
+                copy_publication_year = copy_list[j]['publication_year']
+                
+                counter_title = counter['title']
+                counter_publication_year = counter['publication_year']          
+            
+                if copy_title != counter_title:
+                    if self.compare_words(copy_title, counter_title): 
+                        counter = copy_list[j]
     
+                else: 
+                    if copy_publication_year < counter_publication_year: 
+                        counter = copy_list[j]
+                
+        
+            sorted_list.append(counter)
+            copy_list.remove(counter)
+        return sorted_list
+        
+    def sort_by_last_name(self, some_list):
+        copy_list = some_list.copy()
+        sorted_list = []
+        for i in range(len(some_list)):
+            counter = copy_list[0]
+
+            for j in range(len(copy_list)):
+                
+                copy_last_name = copy_list[j]['last_name']
+                copy_first_name = copy_list[j]['first_name']
+                copy_birth_year = copy_list[j]['birth_year']
+                
+                counter_last_name = counter['last_name']
+                counter_first_name = counter['first_name']
+                counter_birth_year = counter['birth_year']
+                
+                if copy_last_name != counter_last_name:
+                    if self.compare_words(copy_last_name, counter_last_name): 
+                        counter = copy_list[j]
+                
+                elif copy_first_name != counter_first_name:
+                    if self.compare_words(copy_first_name, counter_first_name): 
+                        counter = copy_list[j]
+                
+                else: 
+                    if copy_birth_year < counter_birth_year: 
+                        counter = copy_list[j]
+    
+            sorted_list.append(counter)
+            copy_list.remove(counter)
+        return sorted_list
+        
+        
+    def sort_by_birth_year(self, some_list):
+        copy_list = some_list.copy()
+        sorted_list = []
+        for i in range(len(some_list)):
+            counter = copy_list[0]
+
+            for j in range(len(copy_list)):
+                
+                copy_last_name = copy_list[j]['last_name']
+                copy_first_name = copy_list[j]['first_name']
+                copy_birth_year = copy_list[j]['birth_year']
+                
+                counter_last_name = counter['last_name']
+                counter_first_name = counter['first_name']
+                counter_birth_year = counter['birth_year']
+                
+                if copy_birth_year != counter_birth_year:
+                    if copy_birth_year < counter_birth_year: 
+                        counter = copy_list[j]
+                
+                elif copy_last_name != counter_last_name:
+                    if self.compare_words(copy_last_name, counter_last_name): 
+                        counter = copy_list[j]
+                
+                else: 
+                    if self.compare_words(copy_first_name, counter_first_name): 
+                        counter = copy_list[j]
+
             sorted_list.append(counter)
             copy_list.remove(counter)
         return sorted_list
