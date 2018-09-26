@@ -228,6 +228,18 @@ class BooksDataSourceTest(unittest.TestCase):
         [{'id': 14, 'last_name': 'Brontë', 'first_name': 'Ann','birth_year': 1820, 'death_year': 1849},
          {'id': 7, 'last_name': 'Brontë', 'first_name': 'Charlotte','birth_year': 1816, 'death_year': 1855}, 
          {'id': 15, 'last_name': 'Brontë', 'first_name': 'Emily','birth_year': 1818, 'death_year': 1848}])
+         
+    def test_retrieving_author_by_search_text_same_last_name4(self):
+        self.assertEqual(self.booksdatasource.authors(search_text = 'brontë', sort_by = 'birth_year'), 
+        [{'id': 7, 'last_name': 'Brontë', 'first_name': 'Charlotte','birth_year': 1816, 'death_year': 1855}, 
+         {'id': 15, 'last_name': 'Brontë', 'first_name': 'Emily','birth_year': 1818, 'death_year': 1848},
+         {'id': 14, 'last_name': 'Brontë', 'first_name': 'Ann','birth_year': 1820, 'death_year': 1849}])
+    
+    def test_retrieving_author_by_search_text_same_last_name5(self):
+        self.assertEqual(self.booksdatasource.authors(search_text = 'brontë'), 
+        [{'id': 7, 'last_name': 'Brontë', 'first_name': 'Charlotte','birth_year': 1816, 'death_year': 1855}, 
+         {'id': 15, 'last_name': 'Brontë', 'first_name': 'Emily','birth_year': 1818, 'death_year': 1848},
+         {'id': 14, 'last_name': 'Brontë', 'first_name': 'Ann','birth_year': 1820, 'death_year': 1849}])
 
     def test_retrieving_author_by_search_text_single_letter(self):
         self.assertEqual(self.booksdatasource.authors(search_text = 'k', sort_by = 'last_name'), 

@@ -162,15 +162,14 @@ class BooksDataSource:
                     add_book_end_year = False
                     
             if ((add_book_author_id) and (add_book_search_text) and (add_book_start_year) and (add_book_end_year)):
-                
                 refined_list_of_books.append(book)
             
             #Sort the refined_list_of_books
             if sort_by == 'year':
-                sorted_refined_list_of_books = self.sort_by_publication_year(refined_list_of_books)
+                sorted_refined_list_of_books = self.sort(refined_list_of_books, ['publication_year','title'])
             else:            
-                sorted_refined_list_of_books = self.sort_by_title(refined_list_of_books)
-            
+                sorted_refined_list_of_books = self.sort(refined_list_of_books, ['title','publication_year'])
+        
         return sorted_refined_list_of_books
                 
             
@@ -261,10 +260,11 @@ class BooksDataSource:
             
             #Sort the refined_list_of_books
             if sort_by == 'last_name':
-                sorted_refined_list_of_authors = self.sort_by_last_name(refined_list_of_authors)
+                sorted_refined_list_of_authors = self.sort(refined_list_of_authors, ['last_name', 'first_name', 'birth_year'])
+                
             else:            
-                sorted_refined_list_of_authors = self.sort_by_birth_year(refined_list_of_authors)
-            
+                sorted_refined_list_of_authors = self.sort(refined_list_of_authors, ['birth_year','last_name', 'first_name'])
+        
         return sorted_refined_list_of_authors     
         
     
@@ -282,126 +282,21 @@ class BooksDataSource:
               
     
     
-    
-    #Helper Methods: 
-    def sort_by_publication_year(self, some_list):
+    #Helper Methods:        
+    def sort(self, some_list, some_list_of_tie_breaker_parameters):
         copy_list = some_list.copy()
         sorted_list = []
         for i in range(len(some_list)):
             counter = copy_list[0]
 
             for j in range(len(copy_list)):
-                
-                copy_title = copy_list[j]['title']
-                copy_publication_year = copy_list[j]['publication_year']
-                
-                counter_title = counter['title']
-                counter_publication_year = counter['publication_year']  
-                
-                if copy_publication_year != counter_publication_year:
-                    if copy_publication_year < counter_publication_year: 
-                        counter = copy_list[j] 
-                
-                else:
-                    if self.compare_words(copy_title, counter_title): 
-                        counter = copy_list[j]    
-    
-            sorted_list.append(counter)
-            copy_list.remove(counter)
-        return sorted_list
-
-    def sort_by_title(self, some_list):
-        copy_list = some_list.copy()
-        sorted_list = []
-        for i in range(len(some_list)):
-            counter = copy_list[0]
-
-            for j in range(len(copy_list)):
-                
-                copy_title = copy_list[j]['title']
-                copy_publication_year = copy_list[j]['publication_year']
-                
-                counter_title = counter['title']
-                counter_publication_year = counter['publication_year']          
+                if self.break_tie(copy_list[j], counter, some_list_of_tie_breaker_parameters):
+                    counter = copy_list[j]
             
-                if copy_title != counter_title:
-                    if self.compare_words(copy_title, counter_title): 
-                        counter = copy_list[j]
-    
-                else: 
-                    if copy_publication_year < counter_publication_year: 
-                        counter = copy_list[j]
-                
-        
             sorted_list.append(counter)
             copy_list.remove(counter)
         return sorted_list
-        
-    def sort_by_last_name(self, some_list):
-        copy_list = some_list.copy()
-        sorted_list = []
-        for i in range(len(some_list)):
-            counter = copy_list[0]
 
-            for j in range(len(copy_list)):
-                
-                copy_last_name = copy_list[j]['last_name']
-                copy_first_name = copy_list[j]['first_name']
-                copy_birth_year = copy_list[j]['birth_year']
-                
-                counter_last_name = counter['last_name']
-                counter_first_name = counter['first_name']
-                counter_birth_year = counter['birth_year']
-                
-                if copy_last_name != counter_last_name:
-                    if self.compare_words(copy_last_name, counter_last_name): 
-                        counter = copy_list[j]
-                
-                elif copy_first_name != counter_first_name:
-                    if self.compare_words(copy_first_name, counter_first_name): 
-                        counter = copy_list[j]
-                
-                else: 
-                    if copy_birth_year < counter_birth_year: 
-                        counter = copy_list[j]
-    
-            sorted_list.append(counter)
-            copy_list.remove(counter)
-        return sorted_list
-        
-        
-    def sort_by_birth_year(self, some_list):
-        copy_list = some_list.copy()
-        sorted_list = []
-        for i in range(len(some_list)):
-            counter = copy_list[0]
-
-            for j in range(len(copy_list)):
-                
-                copy_last_name = copy_list[j]['last_name']
-                copy_first_name = copy_list[j]['first_name']
-                copy_birth_year = copy_list[j]['birth_year']
-                
-                counter_last_name = counter['last_name']
-                counter_first_name = counter['first_name']
-                counter_birth_year = counter['birth_year']
-                
-                if copy_birth_year != counter_birth_year:
-                    if copy_birth_year < counter_birth_year: 
-                        counter = copy_list[j]
-                
-                elif copy_last_name != counter_last_name:
-                    if self.compare_words(copy_last_name, counter_last_name): 
-                        counter = copy_list[j]
-                
-                else: 
-                    if self.compare_words(copy_first_name, counter_first_name): 
-                        counter = copy_list[j]
-
-            sorted_list.append(counter)
-            copy_list.remove(counter)
-        return sorted_list
-    
     def compare_words(self, word1, word2):
     
         new_word1 = word1.lower()
@@ -428,3 +323,32 @@ class BooksDataSource:
             if list1[i] > list2[i]:
                 return False
         return shorter_word
+        
+        
+    def break_tie(self, object1, object2, some_list_of_tie_breakers):
+        
+        for parameter in some_list_of_tie_breakers:
+            parameter1 = object1[parameter]
+            parameter2 = object2[parameter]
+            
+            if parameter1 != parameter2:
+                if (type(parameter1) is int) and (type(parameter2) is int):
+                    if parameter1 < parameter2:
+                        return True
+                    else:
+                        return False
+                        
+                if (type(parameter1) is str) and (type(parameter2) is str):
+                    if self.compare_words(object1[parameter], object2[parameter]):
+                        return True
+                    else:
+                        return False
+        
+        
+        
+        
+        
+        
+        
+        
+            
