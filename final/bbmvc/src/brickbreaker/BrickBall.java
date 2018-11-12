@@ -1,44 +1,33 @@
 package brickbreaker;
 
-public class BrickBall {
+import javafx.fxml.FXML;
+import javafx.scene.shape.Circle;
+
+public class BrickBall extends Circle {
+    @FXML private double velocityX;
+    @FXML private double velocityY;
 
     public BrickBall() {
     }
 
-    /** Returns current position of ball.
-     *
-     * @return A tuple containing the x-coordinate and y-coordinate
-     */
-    private void getPosition() {
-
+    public void step() {
+        this.setCenterX(this.getCenterX() + this.velocityX);
+        this.setCenterY(this.getCenterY() + this.velocityY);
     }
 
-    /** Allows player to choose starting direction of ball, and then shoot it
-     *
-     */
-    private void shoot() {
-
+    public double getVelocityX() {
+        return velocityX;
     }
 
-    /** Switches ball to travel in opposite horizontal direction it is currently going.
-     *
-     */
-    private void switchHorizontalDirection() {
-
+    public void setVelocityX(double velocityX) {
+        this.velocityX = velocityX;
     }
 
-    /** Switches ball to travel in opposite vertical direction it is currently going.
-     *
-     */
-    private void switchVerticalDirection() {
-
+    public double getVelocityY() {
+        return velocityY;
     }
 
-    /** Returns current direction ball is going
-     *
-     * @return tuple containing current horiztonal and vertical directions.
-     */
-    private void getDirection() {
-
+    public void setVelocityY(double velocityY) {
+        this.velocityY = velocityY;
     }
 }

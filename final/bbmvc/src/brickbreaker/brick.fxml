@@ -1,24 +1,23 @@
-<?import javafx.scene.layout.AnchorPane?><?import brickbreaker.BrickView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<BorderPane fx:controller="brickbreaker.Controller" xmlns:fx="http://javafx.com/fxml">
-    <!-- See https://apps.carleton.edu/creativeservices/identity/college_colors/ for official Carleton colors -->
-    <top>
-        <BorderPane prefHeight="35" style="-fx-background-color: #910b8e; -fx-padding: 10px, 5px, 10px, 5px" >
-            <left><Label fx:id="scoreLabel" style="-fx-font-size: 150%; -fx-text-fill: white" /></left>
-            <right><Label fx:id="messageLabel" style="-fx-font-size: 150%; -fx-text-fill: white"/></right>
-        </BorderPane>
-    </top>
+<?import javafx.scene.shape.Rectangle?>
+<?import brickbreaker.BrickBall?>
+<AnchorPane fx:controller="brickbreaker.BrickModel" xmlns:fx="http://javafx.com/fxml">
 
-    <center>
-    </center>
+    <Button fx:id="pauseButton" text="Pause" AnchorPane.leftAnchor="30" AnchorPane.topAnchor="15" onAction="#onPauseButton"/>
 
-    <bottom>
-        <HBox prefHeight="35" style="-fx-padding: 10px, 5px, 10px, 5px; -fx-background-color: #ff8d02">
-            <Label style="-fx-font-size: 140%; -fx-text-fill: white"
-                   text="Help: ? / Teleport: T / Stay: S / Move: W E D C X Z A / New game: G" />
-        </HBox>
-    </bottom>
-</BorderPane>
+    <Label fx:id="scoreLabel" AnchorPane.leftAnchor="120" AnchorPane.topAnchor="15" />
+
+    <AnchorPane fx:id="gameBoard"
+                AnchorPane.topAnchor="60" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="20"
+                style="-fx-background-color: #bbb; -fx-border-color:black; -fx-border-width:1px 0px 1px 0px;">
+
+        <BrickBall fx:id="ball" layoutX="100" layoutY="100" radius="5" fill="red" velocityX="-3" velocityY="5" />
+        <Rectangle fx:id="paddle" AnchorPane.bottomAnchor="15" layoutX="100" width="50" height="10" fill="black" />
+    </AnchorPane>
+
+    <Label AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="0" style="-fx-font-size: 100%"
+           text="Left: A or left-arrow; Right: D or right-arrow" />
+
+</AnchorPane>
