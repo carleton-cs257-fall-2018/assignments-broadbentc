@@ -16,7 +16,7 @@ public class Controller implements EventHandler<KeyEvent> {
 
     private BrickModel brickModel;
 
-    private boolean paused;
+    //private boolean paused;
 
     public Controller() {
     }
@@ -45,13 +45,13 @@ public class Controller implements EventHandler<KeyEvent> {
         }
     }
 
-    public void onPauseButton(ActionEvent actionEvent) {
-        if (this.paused) {
-            this.brickModel.pauseGame();
-        }
-        else {
-            this.brickModel.unpauseGame();
-        }
-        this.paused = !this.paused;
-    }
+//    public void onPauseButton(ActionEvent actionEvent) {
+//        if (this.paused) {
+//            this.brickModel.pauseGame();
+//        }
+//        else {
+//            this.brickModel.unpauseGame();
+//        }
+//        this.paused = !this.paused;
+//    }
 }

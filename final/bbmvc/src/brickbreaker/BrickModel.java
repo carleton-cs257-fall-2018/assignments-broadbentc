@@ -16,7 +16,7 @@ import java.util.TimerTask;
 
 public class BrickModel {
 
-    @FXML private Button pauseButton;
+    //@FXML private Button pauseButton;
     @FXML private Label scoreLabel;
     @FXML private AnchorPane gameBoard;
     @FXML private Rectangle paddle;
@@ -70,15 +70,15 @@ public class BrickModel {
         }
     }
 
-    public void pauseGame() {
-        this.pauseButton.setText("Pause");
-        this.startTimer();
-    }
-
-    public void unpauseGame() {
-        this.pauseButton.setText("Continue");
-        this.timer.cancel();
-    }
+//    public void onPauseButton() {
+//        this.pauseButton.setText("Pause");
+//        this.startTimer();
+//    }
+//
+//    public void unpauseGame() {
+//        this.pauseButton.setText("Continue");
+//        this.timer.cancel();
+//    }
 
     private void updateAnimation() {
         double ballCenterX = this.ball.getCenterX() + this.ball.getLayoutX();

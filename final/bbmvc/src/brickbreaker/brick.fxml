@@ -5,7 +5,6 @@
 <?import brickbreaker.BrickBall?>
 <AnchorPane fx:controller="brickbreaker.BrickModel" xmlns:fx="http://javafx.com/fxml">
 
-    <Button fx:id="pauseButton" text="Pause" AnchorPane.leftAnchor="30" AnchorPane.topAnchor="15" onAction="#onPauseButton"/>
 
     <Label fx:id="scoreLabel" AnchorPane.leftAnchor="120" AnchorPane.topAnchor="15" />
 
