@@ -1,13 +1,28 @@
-package brickbreaker;
+/**
+ *Eric Stadelman and Charlie Broadbent
+ *  Ball.java
+ * A subclass used to represent, set values and move our ball
+ */
+package breakout;
 
 import javafx.fxml.FXML;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class BrickBall extends Circle {
+public class Ball extends Circle {
     @FXML private double velocityX;
     @FXML private double velocityY;
 
-    public BrickBall() {
+
+    public Ball() {
+        this.setStroke(Color.BLACK);
+    }
+
+    public void reset(){
+        this.setCenterY(200);
+        this.setCenterX(75);
+        this.setVelocityX(-5);
+        this.setVelocityY(5);
     }
 
     public void step() {
@@ -31,3 +46,5 @@ public class BrickBall extends Circle {
         this.velocityY = velocityY;
     }
 }
+
+
